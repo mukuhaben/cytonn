@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -32,7 +31,6 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.07);
     }
 
-    /* FORM */
     .form-grid {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr auto;
@@ -63,7 +61,6 @@
       background: #fff;
     }
 
-    /* BUTTONS */
     .btn {
       padding: 0.5rem 1rem;
       border: none;
@@ -80,7 +77,6 @@
 
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* MESSAGES */
     .msg {
       padding: 0.6rem 1rem;
       border-radius: 6px;
@@ -91,7 +87,6 @@
     .msg-success { background: #dcfce7; color: #166534; }
     .msg-error { background: #fee2e2; color: #991b1b; }
 
-    /* TABLE */
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
 
     th {
@@ -110,7 +105,6 @@
 
     tr:hover td { background: #f8fafc; }
 
-    /* BADGES */
     .badge {
       padding: 0.2rem 0.5rem;
       border-radius: 999px;
@@ -132,7 +126,6 @@
       padding: 2rem;
     }
   </style>
-
 </head>
 
 <body>
@@ -145,104 +138,91 @@
     {{ message.text }}
   </div>
 
-  <!-- CREATE TASK -->
-
   <div class="card">
     <h2>Create Task</h2>
 
-```
-<div class="form-grid">
+    <div class="form-grid">
+      <div>
+        <label>Title *</label>
+        <input v-model="form.title" type="text" />
+        <small v-if="errors.title" style="color:red">{{ errors.title }}</small>
+      </div>
 
-  <div>
-    <label>Title *</label>
-    <input v-model="form.title" type="text" />
-    <small v-if="errors.title" style="color:red">{{ errors.title }}</small>
+      <div>
+        <label>Priority *</label>
+        <select v-model="form.priority">
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Due Date *</label>
+        <input v-model="form.due_date" type="date" :min="today" />
+      </div>
+
+      <div style="display:flex; gap:0.5rem">
+        <button class="btn btn-primary" @click="createTask" :disabled="loading">
+          {{ loading ? '...' : 'Add' }}
+        </button>
+        <button class="btn" @click="resetForm">Clear</button>
+      </div>
+    </div>
   </div>
-
-  <div>
-    <label>Priority *</label>
-    <select v-model="form.priority">
-      <option value="high">High</option>
-      <option value="medium">Medium</option>
-      <option value="low">Low</option>
-    </select>
-  </div>
-
-  <div>
-    <label>Due Date *</label>
-    <input v-model="form.due_date" type="date" :min="today" />
-  </div>
-
-  <div style="display:flex; gap:0.5rem">
-    <button class="btn btn-primary" @click="createTask" :disabled="loading">
-      {{ loading ? '...' : 'Add' }}
-    </button>
-    <button class="btn" @click="resetForm">Clear</button>
-  </div>
-
-</div>
-```
-
-  </div>
-
-  <!-- TASK LIST -->
 
   <div class="card">
     <div style="display:flex; justify-content:space-between; margin-bottom:1rem">
       <h2>Tasks</h2>
-      <button class="btn btn-report" @click="loadReport">Report</button>
     </div>
 
-```
-<div v-if="tasks.length === 0" class="empty">No tasks yet</div>
+    <div v-if="tasks.length === 0" class="empty">No tasks yet</div>
 
-<table v-else>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Priority</th>
-      <th>Status</th>
-      <th>Due</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
+    <table v-else>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Due</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
 
-  <tbody>
-    <tr v-for="task in tasks" :key="task.id">
-      <td style="font-weight:600">{{ task.title }}</td>
+      <tbody>
+        <tr v-for="task in tasks" :key="task.id">
+          <td style="font-weight:600">{{ task.title }}</td>
 
-      <td>
-        <span :class="['badge','p-'+task.priority]">
-          {{ task.priority }}
-        </span>
-      </td>
+          <td>
+            <span :class="['badge','p-'+task.priority]">
+              {{ task.priority }}
+            </span>
+          </td>
 
-      <td>
-        <span :class="['badge','s-'+task.status]">
-          {{ task.status.replace('_',' ') }}
-        </span>
-      </td>
+          <td>
+            <span :class="['badge','s-'+task.status]">
+              {{ task.status.replace('_',' ') }}
+            </span>
+          </td>
 
-      <td>{{ task.due_date }}</td>
+          <td>{{ task.due_date }}</td>
 
-      <td style="display:flex; gap:0.4rem">
-        <button v-if="nextStatus(task)"
-          class="btn btn-advance"
-          @click="advanceStatus(task)">
-          → {{ nextStatus(task) }}
-        </button>
+          <td style="display:flex; gap:0.4rem">
+            <button v-if="nextStatus(task)"
+              class="btn btn-advance"
+              @click="advanceStatus(task)">
+              → {{ nextStatus(task) }}
+            </button>
 
-        <button v-if="task.status==='done'"
-          class="btn btn-delete"
-          @click="deleteTask(task)">
-          Delete
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-```
-
+            <button v-if="task.status==='done'"
+              class="btn btn-delete"
+              @click="deleteTask(task)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
 </div>
@@ -250,11 +230,12 @@
 <script>
 const { createApp } = Vue
 
+const API_BASE_URL = "https://cytonn-production.up.railway.app/api/v1";
+
 createApp({
   data() {
     return {
       tasks: [],
-      report: null,
       loading: false,
       message: { text: '', type: 'success' },
       errors: {},
@@ -278,23 +259,21 @@ createApp({
 
   methods: {
 
-    async apiCall(method, url, body = null) {
+    async apiCall(method, endpoint, body = null) {
       this.loading = true
       this.message = { text: '', type: 'success' }
       this.errors = {}
 
       try {
-        const options = {
+        const res = await fetch(`${API_BASE_URL}${endpoint}`, {
           method,
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
-          }
-        }
+          },
+          body: body ? JSON.stringify(body) : null
+        })
 
-        if (body) options.body = JSON.stringify(body)
-
-        const res = await fetch(url, options)
         const data = await res.json()
 
         if (!res.ok) {
@@ -309,7 +288,7 @@ createApp({
 
         return data
 
-      } catch {
+      } catch (err) {
         this.showMessage('Server error', 'error')
         return null
       } finally {
@@ -318,12 +297,12 @@ createApp({
     },
 
     async fetchTasks() {
-      const data = await this.apiCall('GET', '/api/tasks')
-      if (data) this.tasks = data
+      const data = await this.apiCall('GET', '/tasks')
+      if (data && data.data) this.tasks = data.data
     },
 
     async createTask() {
-      const data = await this.apiCall('POST', '/api/tasks', this.form)
+      const data = await this.apiCall('POST', '/tasks', this.form)
       if (data) {
         this.showMessage('Task created')
         this.resetForm()
@@ -337,7 +316,7 @@ createApp({
 
       const data = await this.apiCall(
         'PATCH',
-        `/api/tasks/${task.id}/status`,
+        `/tasks/${task.id}/status`,
         { status: next }
       )
 
@@ -349,7 +328,7 @@ createApp({
 
       const data = await this.apiCall(
         'DELETE',
-        `/api/tasks/${task.id}`
+        `/tasks/${task.id}`
       )
 
       if (data) this.fetchTasks()
