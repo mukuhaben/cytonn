@@ -1,0 +1,37 @@
+# Logs
+backend/*.log
+
+# Env files
+backend/.env
+backend/.env.*
+
+# Laravel core ignores
+backend/vendor/
+backend/node_modules/
+backend/storage/*
+!backend/storage/app/public
+backend/bootstrap/cache/*
+
+# Build outputs
+backend/public/build
+backend/public/hot
+backend/public/storage
+
+# IDE / OS files
+backend/.idea/
+backend/.vscode/
+backend/.fleet/
+backend/.zed/
+backend/.nova/
+backend/.DS_Store
+backend/Thumbs.db
+
+# Misc
+backend/auth.json
+backend/phpactor.json
+backend/phpunit.result.cache
+backend/.phpunit.cache
+
+# Homestead
+backend/Homestead.json
+backend/Homestead.yaml
