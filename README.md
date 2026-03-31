@@ -129,7 +129,6 @@ php artisan migrate:status
  
 ```bash 
 php artisan serve (local development)
-# API available at: http://127.0.0.1:8000/api/v1/
 #API_BASE_URL = "https://cytonn-production.up.railway.app/api/v1";
 # Frontend available at: http://127.0.0.1:8000/index.html (live server) or https://cytonn-ngatia2026.vercel.app/
 ``` 
