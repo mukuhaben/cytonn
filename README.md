@@ -7,7 +7,7 @@ This project demonstrates strong backend architecture with strict business rule 
 
 ## Live Demo
 
-* **API Base URL:** https://cytonn-production.up.railway.app/api/v1
+* **API Base URL:**https://cytonn-production.up.railway.app/
 * **Frontend:** https://cytonn-ngatia2026.vercel.app/
 
 ---
